@@ -34,7 +34,8 @@ export default async function handler(req, res) {
                     LEFT JOIN issues i ON te.issue_id = i.id
                     LEFT JOIN users u ON te.user_id = u.id
                     LEFT JOIN custom_values cv ON cv.customized_type = 'TimeEntry' AND cv.customized_id = te.id
-                    LEFT JOIN custom_fields cf ON cv.custom_field_id = cf.id;
+                    LEFT JOIN custom_fields cf ON cv.custom_field_id = cf.id
+            where te.id > 2872;
         `);
 
         await connection.end();
@@ -66,7 +67,7 @@ export default async function handler(req, res) {
             // If there's a custom field, add it to the custom_fields object
             if (row.custom_field_name) {
                 try {
-                    groupedTimeEntries[row.time_entry_id].custom_fields[row.custom_field_name] = JSON.parse(
+                    groupedTimeEntries[row.time_entry_id][row.custom_field_name] = JSON.parse(
                         row.custom_field_value
                             .replace(/\s+/g, '') // remove spaces
                             .replace(/(\d+)\.(?=,|\])/g, '$1.0') // fix decimals
@@ -75,7 +76,7 @@ export default async function handler(req, res) {
                     );
                 } catch (error) {
                     console.log('Error parsing custom field value:', row.custom_field_value);
-                    groupedTimeEntries[row.time_entry_id].custom_fields[row.custom_field_name] = row.custom_field_value; // fallback to raw value
+                    groupedTimeEntries[row.time_entry_id][row.custom_field_name] = row.custom_field_value; // fallback to raw value
                 }
             }
         }
@@ -86,19 +87,7 @@ export default async function handler(req, res) {
         // Loop through each grouped time entry and index it into OpenSearch
         for (const timeEntryId in groupedTimeEntries) {
             const timeEntry = groupedTimeEntries[timeEntryId];
-            const doc = {
-                time_entry_id: timeEntry.time_entry_id,
-                hours: timeEntry.hours,
-                spent_on: timeEntry.spent_on,
-                project_id: timeEntry.project_id,
-                project_name: timeEntry.project_name,
-                issue_id: timeEntry.issue_id,
-                issue_subject: timeEntry.issue_subject,
-                user_id: timeEntry.user_id,
-                user_login: timeEntry.user_login,
-                custom_fields: timeEntry.custom_fields,
-                timestamp: new Date().toISOString() // Adding timestamp to the document
-            };
+            const doc = timeEntry;
 
             try {
                 // Index the document into OpenSearch

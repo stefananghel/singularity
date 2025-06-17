@@ -1,0 +1,16 @@
+{
+  "name": "tenants",
+  "version": "1.0.0",
+  "main": "hello.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^6.15.0",
+    "node-fetch": "^3.3.2"
+  },
+  "description": ""
+}
