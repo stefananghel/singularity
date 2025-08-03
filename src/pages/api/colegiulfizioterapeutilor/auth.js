@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const response = await fetch('https://colegiulfizioterapeutilor.ro/wp-admin/admin-ajax.php?action=stm_lms_login&nonce=a6bfd43e13', {
+        const response = await fetch('https://colegiulfizioterapeutilor.ro/wp-admin/admin-ajax.php?action=stm_lms_login&nonce=c33101ba34', {
             method: 'POST',
             headers: {
                 'accept': '*/*',
